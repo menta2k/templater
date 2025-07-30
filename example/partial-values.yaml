@@ -1,0 +1,8 @@
+app:
+  name: "demo-app"
+  version: "1.0.0"
+
+environment: "production"
+
+# Note: database and cache sections are missing
+# This will cause strict mode to fail

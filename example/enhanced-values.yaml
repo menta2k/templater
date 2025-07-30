@@ -1,0 +1,40 @@
+app:
+  name: "my awesome app"
+  version: "2.1.0"
+
+environment: "production"
+debug: true
+maxConnections: 500
+logLevel: "debug"
+
+deployTime: "2024-01-15T10:30:00Z"
+
+services:
+  - "web-server"
+  - "database"
+  - "cache-service"
+  - "message-queue"
+
+database:
+  host: "db.example.com"
+  port: 5432
+  name: "myapp_prod"
+  ssl: true
+  maxConnections: 100
+
+config:
+  timeout: 30
+  retries: 3
+  enableMetrics: true
+  features:
+    - "analytics"
+    - "monitoring"
+    - "alerting"
+
+description: "   This is a comprehensive application template that demonstrates various template functions and capabilities.   "
+
+replicas: 3
+cpu: 0.5
+
+baseUrl: "https://api.myapp.com"
+secret: "super-secret-password"
