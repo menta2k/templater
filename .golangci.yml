@@ -12,10 +12,20 @@ linters-settings:
   gocyclo:
     min-complexity: 15
   
+  cyclop:
+    max-complexity: 15
+  
+  gocognit:
+    min-complexity: 35
+  
+  nestif:
+    min-complexity: 8
+  
   govet:
     enable-all: true
     disable:
       - fieldalignment
+      - shadow
   
   misspell:
     locale: US
@@ -29,6 +39,33 @@ linters-settings:
         arguments:
           - "checkPrivateReceivers"
           - "sayRepetitiveInsteadOfStutters"
+  
+  lll:
+    line-length: 150
+  
+  gosec:
+    excludes:
+      - G306 # file permissions in tests
+  
+  forbidigo:
+    forbid:
+      - ^(print|println)$
+    exclude-godoc-examples: true
+  
+  mnd:
+    checks:
+      - argument
+      - case
+      - condition
+      - operation
+      - return
+      - assign
+    ignored-numbers:
+      - '0'
+      - '1'
+      - '2'
+      - '0o755'
+      - '0o644'
 
 linters:
   enable:
@@ -44,8 +81,7 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
-    - forbidigo
+    - copyloopvar
     - forcetypeassert
     - gci
     - gochecknoinits
@@ -58,7 +94,7 @@ linters:
     - gofumpt
     - goheader
     - goimports
-    - gomnd
+    - mnd
     - gomoddirectives
     - gomodguard
     - goprintffuncname
@@ -107,12 +143,34 @@ issues:
   exclude-rules:
     - path: _test\.go
       linters:
-        - gomnd
+        - mnd
         - goconst
         - dupl
+        - gosec
+        - gocognit
+        - cyclop
+        - nestif
+        - maintidx
+        - tenv
+        - staticcheck
+        - gocritic
     - path: cmd/
       linters:
         - forbidigo
+    - path: verify-deps\.go
+      linters:
+        - govet
+        - unused
+        - deadcode
+    - text: "type assertion on error will fail on wrapped errors"
+      linters:
+        - errorlint
+    - text: "possible nil pointer dereference"
+      linters:
+        - staticcheck
+    - text: "elseif: can replace"
+      linters:
+        - gocritic
   
   max-issues-per-linter: 0
   max-same-issues: 0

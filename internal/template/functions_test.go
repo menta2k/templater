@@ -46,7 +46,6 @@ func TestGetTemplateFuncs(t *testing.T) {
 	}
 }
 
-
 func TestEnhancedTemplateFunctionsInTemplate(t *testing.T) {
 	templateText := `
 Default: {{default "fallback" .value}}

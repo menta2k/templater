@@ -1,6 +1,6 @@
 package config
 
-// Config holds the configuration for template processing
+// Config holds the configuration for template processing.
 type Config struct {
 	TemplateFile string
 	ValuesFile   string
@@ -11,7 +11,7 @@ type Config struct {
 	StrictMode   bool
 }
 
-// NewConfig creates a new configuration instance
+// NewConfig creates a new configuration instance.
 func NewConfig(templateFile, valuesFile, outputFile string, setValues []string, isDirectory, strictMode bool) *Config {
 	return &Config{
 		TemplateFile: templateFile,

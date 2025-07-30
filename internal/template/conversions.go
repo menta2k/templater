@@ -10,14 +10,14 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-// YAML conversion functions
+// YAML conversion functions.
 
-// toYAML takes an interface, marshals it to yaml, and returns a string. It will
+// toYAML takes an interface, marshals it to yaml, and returns a string. It will.
 // always return a string, even on marshal error (empty string).
 func toYAML(v any) string {
 	// Convert map[interface{}]interface{} to map[string]any if needed
 	converted := convertMapKeys(v)
-	
+
 	data, err := yaml.Marshal(converted)
 	if err != nil {
 		// Swallow errors inside of a template.
@@ -43,7 +43,6 @@ func toYAMLPretty(v any) string {
 	encoder := yaml3.NewEncoder(&data)
 	encoder.SetIndent(2)
 	err := encoder.Encode(v)
-
 	if err != nil {
 		// Swallow errors inside of a template.
 		return ""
@@ -71,7 +70,7 @@ func fromYAMLArray(str string) []any {
 	return a
 }
 
-// JSON conversion functions
+// JSON conversion functions.
 
 // toJSON takes an interface, marshals it to json, and returns a string.
 func toJSON(v any) string {
@@ -115,7 +114,7 @@ func fromJSONArray(str string) []any {
 	return a
 }
 
-// TOML conversion functions
+// TOML conversion functions.
 
 // toTOML takes an interface, marshals it to toml, and returns a string.
 func toTOML(v any) string {
@@ -139,9 +138,9 @@ func fromTOML(str string) map[string]any {
 	return m
 }
 
-// convertMapKeys recursively converts map[interface{}]interface{} to map[string]any
-// This is needed because YAML unmarshaling creates interface{} keys which cause
-// JSON marshaling to fail
+// convertMapKeys recursively converts map[interface{}]interface{} to map[string]any.
+// This is needed because YAML unmarshaling creates interface{} keys which cause.
+// JSON marshaling to fail.
 func convertMapKeys(v any) any {
 	switch x := v.(type) {
 	case map[interface{}]interface{}:

@@ -1,6 +1,7 @@
 package processor
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,13 +12,13 @@ import (
 	"github.com/menta2k/templater/internal/values"
 )
 
-// TemplateProcessor handles template processing operations
+// TemplateProcessor handles template processing operations.
 type TemplateProcessor struct {
 	config       *config.Config
 	valuesLoader *values.Loader
 }
 
-// NewTemplateProcessor creates a new template processor
+// NewTemplateProcessor creates a new template processor.
 func NewTemplateProcessor(cfg *config.Config) *TemplateProcessor {
 	return &TemplateProcessor{
 		config:       cfg,
@@ -25,7 +26,7 @@ func NewTemplateProcessor(cfg *config.Config) *TemplateProcessor {
 	}
 }
 
-// Process processes the template(s) with merged values
+// Process processes the template(s) with merged values.
 func (tp *TemplateProcessor) Process() error {
 	// Load values from YAML file
 	yamlValues, err := tp.valuesLoader.LoadYAMLValues(tp.config.ValuesFile)
@@ -60,7 +61,7 @@ func (tp *TemplateProcessor) Process() error {
 	}
 }
 
-// processTemplatePath processes a path that may contain template variables
+// processTemplatePath processes a path that may contain template variables.
 func (tp *TemplateProcessor) processTemplatePath(pathTemplate string, allValues map[string]any) (string, error) {
 	// Create strict template wrapper for path processing
 	strictTemplate := templatepkg.NewStrictTemplate("path", tp.config.StrictMode)
@@ -75,7 +76,8 @@ func (tp *TemplateProcessor) processTemplatePath(pathTemplate string, allValues 
 	result, err := parsedTemplate.ExecuteTemplate(allValues)
 	if err != nil {
 		// Check if it's a strict mode error
-		if strictErr, ok := err.(*templatepkg.StrictModeError); ok {
+		var strictErr *templatepkg.StrictModeError
+		if errors.As(err, &strictErr) {
 			return "", fmt.Errorf("strict mode error in path template '%s': %s", pathTemplate, strictErr.Error())
 		}
 		return "", fmt.Errorf("failed to execute path template '%s': %w", pathTemplate, err)
@@ -84,9 +86,9 @@ func (tp *TemplateProcessor) processTemplatePath(pathTemplate string, allValues 
 	return result, nil
 }
 
-// findTemplateFiles recursively finds all *.tpl files in a directory
-func (tp *TemplateProcessor) findTemplateFiles(templateDir, outputDir string, allValues map[string]any) ([]templatepkg.TemplateFile, error) {
-	var templateFiles []templatepkg.TemplateFile
+// findTemplateFiles recursively finds all *.tpl files in a directory.
+func (tp *TemplateProcessor) findTemplateFiles(templateDir, outputDir string, allValues map[string]any) ([]templatepkg.File, error) {
+	var templateFiles []templatepkg.File
 
 	err := filepath.Walk(templateDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -111,7 +113,7 @@ func (tp *TemplateProcessor) findTemplateFiles(templateDir, outputDir string, al
 			outputName := strings.TrimSuffix(processedRelativePath, ".tpl")
 			outputPath := filepath.Join(outputDir, outputName)
 
-			templateFiles = append(templateFiles, templatepkg.TemplateFile{
+			templateFiles = append(templateFiles, templatepkg.File{
 				SourcePath:   path,
 				RelativePath: relativePath,
 				OutputPath:   outputPath,
@@ -120,7 +122,6 @@ func (tp *TemplateProcessor) findTemplateFiles(templateDir, outputDir string, al
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("error walking template directory: %w", err)
 	}
@@ -128,14 +129,14 @@ func (tp *TemplateProcessor) findTemplateFiles(templateDir, outputDir string, al
 	return templateFiles, nil
 }
 
-// ensureOutputDir creates the output directory structure for a file
+// ensureOutputDir creates the output directory structure for a file.
 func (tp *TemplateProcessor) ensureOutputDir(outputPath string) error {
 	outputDir := filepath.Dir(outputPath)
-	return os.MkdirAll(outputDir, 0755)
+	return os.MkdirAll(outputDir, 0o755)
 }
 
-// processTemplateFile processes a single template file
-func (tp *TemplateProcessor) processTemplateFile(templateFile templatepkg.TemplateFile, allValues map[string]any) error {
+// processTemplateFile processes a single template file.
+func (tp *TemplateProcessor) processTemplateFile(templateFile templatepkg.File, allValues map[string]any) error {
 	// Load and parse template
 	templateContent, err := os.ReadFile(templateFile.SourcePath)
 	if err != nil {
@@ -161,7 +162,8 @@ func (tp *TemplateProcessor) processTemplateFile(templateFile templatepkg.Templa
 	result, err := parsedTemplate.ExecuteTemplate(allValues)
 	if err != nil {
 		// Check if it's a strict mode error
-		if strictErr, ok := err.(*templatepkg.StrictModeError); ok {
+		var strictErr *templatepkg.StrictModeError
+		if errors.As(err, &strictErr) {
 			return fmt.Errorf("strict mode error in %s: %s", templateFile.SourcePath, strictErr.Error())
 		}
 		return fmt.Errorf("failed to execute template %s: %w", templateFile.SourcePath, err)
@@ -184,7 +186,7 @@ func (tp *TemplateProcessor) processTemplateFile(templateFile templatepkg.Templa
 	return nil
 }
 
-// processDirectory processes all *.tpl files in a directory recursively
+// processDirectory processes all *.tpl files in a directory recursively.
 func (tp *TemplateProcessor) processDirectory(allValues map[string]any) error {
 	templateDir := tp.config.TemplateFile
 	outputDir := tp.config.OutputFile
@@ -214,9 +216,9 @@ func (tp *TemplateProcessor) processDirectory(allValues map[string]any) error {
 	return nil
 }
 
-// processSingleFile processes a single template file
+// processSingleFile processes a single template file.
 func (tp *TemplateProcessor) processSingleFile(allValues map[string]any) error {
-	templateFile := templatepkg.TemplateFile{
+	templateFile := templatepkg.File{
 		SourcePath:   tp.config.TemplateFile,
 		RelativePath: filepath.Base(tp.config.TemplateFile),
 		OutputPath:   tp.config.OutputFile,

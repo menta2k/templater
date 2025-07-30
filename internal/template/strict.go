@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-// StrictModeError represents an error that occurs when a template variable is undefined in strict mode
+// StrictModeError represents an error that occurs when a template variable is undefined in strict mode.
 type StrictModeError struct {
 	Variable string
 	Template string
@@ -16,45 +16,45 @@ func (e *StrictModeError) Error() string {
 	return fmt.Sprintf("undefined variable '%s' in template '%s' (strict mode enabled)", e.Variable, e.Template)
 }
 
-// StrictTemplate wraps a template to provide strict mode validation
+// StrictTemplate wraps a template to provide strict mode validation.
 type StrictTemplate struct {
 	*template.Template
 	StrictMode bool
 }
 
-// NewStrictTemplate creates a new template wrapper with strict mode support
+// NewStrictTemplate creates a new template wrapper with strict mode support.
 func NewStrictTemplate(name string, strictMode bool) *StrictTemplate {
 	tmpl := template.New(name).Funcs(GetTemplateFuncs())
-	
+
 	// In strict mode, we need to add a custom function that catches undefined variables
 	if strictMode {
 		// Override the default "missingkey" option to error instead of printing "<no value>"
 		tmpl = tmpl.Option("missingkey=error")
 	}
-	
+
 	return &StrictTemplate{
 		Template:   tmpl,
 		StrictMode: strictMode,
 	}
 }
 
-// ParseTemplate parses template content with strict mode considerations
+// ParseTemplate parses template content with strict mode considerations.
 func (st *StrictTemplate) ParseTemplate(content string) (*StrictTemplate, error) {
 	tmpl, err := st.Template.Parse(content)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &StrictTemplate{
 		Template:   tmpl,
 		StrictMode: st.StrictMode,
 	}, nil
 }
 
-// ExecuteTemplate executes the template with strict mode validation
+// ExecuteTemplate executes the template with strict mode validation.
 func (st *StrictTemplate) ExecuteTemplate(data any) (string, error) {
 	var result strings.Builder
-	
+
 	if st.StrictMode {
 		// In strict mode, template execution will fail with "missingkey=error" option
 		// if any undefined variables are encountered
@@ -77,11 +77,11 @@ func (st *StrictTemplate) ExecuteTemplate(data any) (string, error) {
 			return "", err
 		}
 	}
-	
+
 	return result.String(), nil
 }
 
-// extractVariableFromError attempts to extract the variable name from a template error message
+// extractVariableFromError attempts to extract the variable name from a template error message.
 func extractVariableFromError(errMsg string) string {
 	// Try to extract variable name from common error patterns
 	if strings.Contains(errMsg, "map has no entry for key") {
@@ -94,7 +94,7 @@ func extractVariableFromError(errMsg string) string {
 			}
 		}
 	}
-	
+
 	if strings.Contains(errMsg, "can't evaluate field") {
 		// Example: "template: test:1:2: executing \"test\" at <.app.undefined>: can't evaluate field undefined in type map[string]interface {}"
 		parts := strings.Split(errMsg, "field ")
@@ -105,7 +105,7 @@ func extractVariableFromError(errMsg string) string {
 			}
 		}
 	}
-	
+
 	// If we can't extract the specific variable, return a generic message
 	return "unknown"
 }

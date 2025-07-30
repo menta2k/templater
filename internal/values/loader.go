@@ -9,15 +9,15 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Loader handles loading values from various sources
+// Loader handles loading values from various sources.
 type Loader struct{}
 
-// NewLoader creates a new values loader
+// NewLoader creates a new values loader.
 func NewLoader() *Loader {
 	return &Loader{}
 }
 
-// LoadYAMLValues loads values from a YAML file
+// LoadYAMLValues loads values from a YAML file.
 func (l *Loader) LoadYAMLValues(valuesFile string) (map[string]any, error) {
 	values := make(map[string]any)
 
@@ -38,7 +38,7 @@ func (l *Loader) LoadYAMLValues(valuesFile string) (map[string]any, error) {
 	return values, nil
 }
 
-// LoadEnvValues loads values from environment variables and converts keys to camelCase
+// LoadEnvValues loads values from environment variables and converts keys to camelCase.
 func (l *Loader) LoadEnvValues() map[string]any {
 	envValues := make(map[string]any)
 
@@ -60,7 +60,7 @@ func (l *Loader) LoadEnvValues() map[string]any {
 	return envValues
 }
 
-// ParseSetValues parses command-line set values
+// ParseSetValues parses command-line set values.
 func (l *Loader) ParseSetValues(setValues []string) (map[string]any, error) {
 	parsedValues := make(map[string]any)
 
@@ -97,8 +97,8 @@ func (l *Loader) ParseSetValues(setValues []string) (map[string]any, error) {
 	return parsedValues, nil
 }
 
-// MergeValues merges YAML values with environment variables and --set values
-// Precedence: --set values > environment variables > YAML values
+// MergeValues merges YAML values with environment variables and --set values.
+// Precedence: --set values > environment variables > YAML values.
 func (l *Loader) MergeValues(yamlValues, envValues, setValues, configValues map[string]any) map[string]any {
 	merged := make(map[string]any)
 
@@ -117,7 +117,7 @@ func (l *Loader) MergeValues(yamlValues, envValues, setValues, configValues map[
 	return merged
 }
 
-// convertValue attempts to convert string values to appropriate types
+// convertValue attempts to convert string values to appropriate types.
 func (l *Loader) convertValue(value string) any {
 	// Try to convert to boolean
 	if strings.ToLower(value) == "true" {
@@ -141,7 +141,7 @@ func (l *Loader) convertValue(value string) any {
 	return value
 }
 
-// setNestedValue sets a value in a nested map structure using dot notation
+// setNestedValue sets a value in a nested map structure using dot notation.
 func (l *Loader) setNestedValue(values map[string]any, key string, value any) error {
 	keys := strings.Split(key, ".")
 
@@ -169,7 +169,7 @@ func (l *Loader) setNestedValue(values map[string]any, key string, value any) er
 	return nil
 }
 
-// toCamelCase converts UPPER_CASE_WITH_UNDERSCORES to camelCase
+// toCamelCase converts UPPER_CASE_WITH_UNDERSCORES to camelCase.
 func (l *Loader) toCamelCase(s string) string {
 	if s == "" {
 		return s
@@ -189,7 +189,7 @@ func (l *Loader) toCamelCase(s string) string {
 	return result
 }
 
-// deepMerge recursively merges source map into destination map
+// deepMerge recursively merges source map into destination map.
 func (l *Loader) deepMerge(dst, src map[string]any) {
 	for k, v := range src {
 		if srcMap, srcIsMap := v.(map[string]any); srcIsMap {

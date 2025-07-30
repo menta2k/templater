@@ -135,13 +135,13 @@ Debug: {{default false .debug}}
 Upper: {{upper .app.name}}`
 
 	templatePath := filepath.Join(tempDir, "test.tpl")
-	err = os.WriteFile(templatePath, []byte(templateContent), 0644)
+	err = os.WriteFile(templatePath, []byte(templateContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write template file: %v", err)
 	}
 
 	outputPath := filepath.Join(tempDir, "output.txt")
-	templateFile := templatepkg.TemplateFile{
+	templateFile := templatepkg.File{
 		SourcePath:   templatePath,
 		RelativePath: "test.tpl",
 		OutputPath:   outputPath,
@@ -206,11 +206,11 @@ func TestFindTemplateFiles(t *testing.T) {
 
 	for _, file := range templateFiles {
 		fullPath := filepath.Join(tempDir, file)
-		err := os.MkdirAll(filepath.Dir(fullPath), 0755)
+		err := os.MkdirAll(filepath.Dir(fullPath), 0o755)
 		if err != nil {
 			t.Fatalf("Failed to create directory for %s: %v", file, err)
 		}
-		err = os.WriteFile(fullPath, []byte("test content"), 0644)
+		err = os.WriteFile(fullPath, []byte("test content"), 0o644)
 		if err != nil {
 			t.Fatalf("Failed to create file %s: %v", file, err)
 		}
@@ -252,7 +252,7 @@ func TestProcessSingleFile(t *testing.T) {
 	// Create a test template file
 	templateContent := `Hello {{.name}}!`
 	templatePath := filepath.Join(tempDir, "test.tpl")
-	err = os.WriteFile(templatePath, []byte(templateContent), 0644)
+	err = os.WriteFile(templatePath, []byte(templateContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write template file: %v", err)
 	}
@@ -260,7 +260,7 @@ func TestProcessSingleFile(t *testing.T) {
 	// Create a test values file
 	valuesContent := `name: World`
 	valuesPath := filepath.Join(tempDir, "values.yaml")
-	err = os.WriteFile(valuesPath, []byte(valuesContent), 0644)
+	err = os.WriteFile(valuesPath, []byte(valuesContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write values file: %v", err)
 	}
@@ -298,7 +298,7 @@ func TestProcessDirectory(t *testing.T) {
 
 	// Create template directory structure
 	templateDir := filepath.Join(tempDir, "templates")
-	err = os.MkdirAll(filepath.Join(templateDir, "{{.app.name}}"), 0755)
+	err = os.MkdirAll(filepath.Join(templateDir, "{{.app.name}}"), 0o755)
 	if err != nil {
 		t.Fatalf("Failed to create template directory: %v", err)
 	}
@@ -311,11 +311,11 @@ func TestProcessDirectory(t *testing.T) {
 
 	for file, content := range templates {
 		fullPath := filepath.Join(templateDir, file)
-		err := os.MkdirAll(filepath.Dir(fullPath), 0755)
+		err := os.MkdirAll(filepath.Dir(fullPath), 0o755)
 		if err != nil {
 			t.Fatalf("Failed to create directory for %s: %v", file, err)
 		}
-		err = os.WriteFile(fullPath, []byte(content), 0644)
+		err = os.WriteFile(fullPath, []byte(content), 0o644)
 		if err != nil {
 			t.Fatalf("Failed to create template file %s: %v", file, err)
 		}
@@ -326,7 +326,7 @@ func TestProcessDirectory(t *testing.T) {
   name: myapp
   version: 1.0.0`
 	valuesPath := filepath.Join(tempDir, "values.yaml")
-	err = os.WriteFile(valuesPath, []byte(valuesContent), 0644)
+	err = os.WriteFile(valuesPath, []byte(valuesContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write values file: %v", err)
 	}
@@ -424,14 +424,14 @@ func TestStrictModeProcessing(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create template file
 			templatePath := filepath.Join(tempDir, tt.name+".tpl")
-			err := os.WriteFile(templatePath, []byte(tt.template), 0644)
+			err := os.WriteFile(templatePath, []byte(tt.template), 0o644)
 			if err != nil {
 				t.Fatalf("Failed to create template file: %v", err)
 			}
 
 			// Create values file
 			valuesPath := filepath.Join(tempDir, tt.name+".yaml")
-			err = os.WriteFile(valuesPath, []byte(tt.values), 0644)
+			err = os.WriteFile(valuesPath, []byte(tt.values), 0o644)
 			if err != nil {
 				t.Fatalf("Failed to create values file: %v", err)
 			}
@@ -470,7 +470,7 @@ func TestStrictModePathProcessing(t *testing.T) {
 
 	// Create template directory structure
 	templateDir := filepath.Join(tempDir, "templates")
-	err = os.MkdirAll(filepath.Join(templateDir, "{{.environment}}"), 0755)
+	err = os.MkdirAll(filepath.Join(templateDir, "{{.environment}}"), 0o755)
 	if err != nil {
 		t.Fatalf("Failed to create template directory: %v", err)
 	}
@@ -478,7 +478,7 @@ func TestStrictModePathProcessing(t *testing.T) {
 	// Create template file with templated path
 	templatePath := filepath.Join(templateDir, "{{.environment}}", "config.tpl")
 	templateContent := "Config for {{.app.name}}"
-	err = os.WriteFile(templatePath, []byte(templateContent), 0644)
+	err = os.WriteFile(templatePath, []byte(templateContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create template file: %v", err)
 	}
@@ -519,7 +519,7 @@ environment: production`,
 		t.Run(tt.name, func(t *testing.T) {
 			// Create values file
 			valuesPath := filepath.Join(tempDir, tt.name+".yaml")
-			err := os.WriteFile(valuesPath, []byte(tt.values), 0644)
+			err := os.WriteFile(valuesPath, []byte(tt.values), 0o644)
 			if err != nil {
 				t.Fatalf("Failed to create values file: %v", err)
 			}

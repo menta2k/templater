@@ -261,9 +261,9 @@ func TestSetNestedValue(t *testing.T) {
 			},
 		},
 		{
-			name:    "existing nested structure",
-			key:     "app.version",
-			value:   "2.0",
+			name:  "existing nested structure",
+			key:   "app.version",
+			value: "2.0",
 			initial: map[string]interface{}{
 				"app": map[string]interface{}{"name": "test-app"},
 			},
@@ -272,10 +272,10 @@ func TestSetNestedValue(t *testing.T) {
 			},
 		},
 		{
-			name:    "conflict with non-map",
-			key:     "app.version",
-			value:   "2.0",
-			initial: map[string]interface{}{"app": "not-a-map"},
+			name:      "conflict with non-map",
+			key:       "app.version",
+			value:     "2.0",
+			initial:   map[string]interface{}{"app": "not-a-map"},
 			wantError: true,
 		},
 	}
@@ -333,8 +333,8 @@ func TestMergeValues(t *testing.T) {
 
 	expected := map[string]interface{}{
 		"app": map[string]interface{}{
-			"name":    "env-app",     // from env (overrides yaml)
-			"version": "2.0",        // from set (overrides yaml)
+			"name":    "env-app", // from env (overrides yaml)
+			"version": "2.0",     // from set (overrides yaml)
 		},
 		"debug":          true, // from set (overrides yaml)
 		"port":           8080, // from env
