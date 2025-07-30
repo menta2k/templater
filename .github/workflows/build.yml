@@ -46,7 +46,7 @@ jobs:
         fail_ci_if_error: false
     
     - name: Build templater
-      run: go build -v ./cmd/templater
+      run: go build -v -o templater ./cmd/templater
 
   build:
     runs-on: ubuntu-latest

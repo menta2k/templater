@@ -4,8 +4,8 @@
 *.dll
 *.so
 *.dylib
-templater
-templater-*
+/templater
+/templater-*
 
 # Test binary
 *.test
